@@ -9,7 +9,6 @@
     "build-electron": "npx electron-build-env neon build tantivy",
     "install": "node-pre-gyp install --fallback-to-build=true || neon build --release",
     "package": "node-pre-gyp package",
-    "upload-binary": "node-pre-gyp package && node-pre-gyp-github publish",
     "start": "nodemon -e \"rs toml\" -x \"neon build --release\""
   },
   "author": "Stranger Labs",
@@ -26,14 +25,16 @@
     }
   ],
   "license": "MIT",
+  "dependencies": {
+    "@mapbox/node-pre-gyp": "1.0.8"
+  },
   "devDependencies": {
     "electron-build-env": "0.2.0",
     "electron-rebuild": "3.2.7",
     "nan": "2.15.0",
     "neon-cli": "0.9.1",
     "nodemon": "2.0.15",
-    "node-gyp": "8.4.1",
-    "@mapbox/node-pre-gyp": "1.0.8"
+    "node-gyp": "8.4.1"
   },
   "repository": {
     "type": "git",
