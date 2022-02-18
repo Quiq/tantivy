@@ -82,6 +82,7 @@ Please browse to the examples folder for line-by-line documentation of the API.
 ## Maintainers
 
 StJohn Giddy [@thecallsign](https://github.com/thecallsign)
+Phill Mell-Davies [@pdavies011010](https://github.com/pdavies011010)
 
 ## Contributing
 

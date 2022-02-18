@@ -1,13 +1,13 @@
 {
   "name": "@strangerlabs/tantivy",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "NodeJS bindings for Tantivy",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0",
     "build": "neon build --release",
     "build-electron": "npx electron-build-env neon build tantivy",
-    "install": "node-pre-gyp install --fallback-to-build=false || neon build --release",
+    "install": "node-pre-gyp install --fallback-to-build=true || neon build --release",
     "package": "node-pre-gyp package",
     "upload-binary": "node-pre-gyp package && node-pre-gyp-github publish",
     "start": "nodemon -e \"rs toml\" -x \"neon build --release\""
@@ -18,22 +18,26 @@
       "name": "StJohn Giddy",
       "email": "stjohn@strangerlabs.io",
       "url": "https://strangerlabs.io"
+    },
+    {
+      "name": "Phill Mell-Davies",
+      "email": "phill.mell-davies@quiq.com",
+      "url": "https://quiq.com"
     }
   ],
   "license": "MIT",
   "devDependencies": {
-    "electron-build-env": "^0.2",
-    "electron-rebuild": "^1.8",
-    "neon-cli": "^0.3",
-    "nodemon": "^1"
-  },
-  "dependencies": {
-    "@amilajack/node-pre-gyp": "github:amilajack/node-pre-gyp#neon-compat",
-    "node-pre-gyp-github": "^1.4.3"
+    "electron-build-env": "0.2.0",
+    "electron-rebuild": "3.2.7",
+    "nan": "2.15.0",
+    "neon-cli": "0.9.1",
+    "nodemon": "2.0.15",
+    "node-gyp": "8.4.1",
+    "@mapbox/node-pre-gyp": "1.0.8"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/strangerlabs/tantivy.git"
+    "url": "git+https://github.com/quiq/tantivy.git"
   },
   "files": [
     "native"
@@ -41,7 +45,7 @@
   "binary": {
     "module_name": "index",
     "module_path": "./native",
-    "host": "https://github.com/strangerlabs/tantivy/releases/download/",
+    "host": "https://github.com/quiq/tantivy/releases/download/",
     "remote_path": "{version}",
     "package_name": "index-v{version}-{node_abi}-{platform}-{arch}.tar.gz",
     "pkg_path": "."

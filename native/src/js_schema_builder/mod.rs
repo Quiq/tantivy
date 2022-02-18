@@ -3,13 +3,7 @@ extern crate tantivy;
 
 use neon::prelude::*;
 use tantivy::{
-    query::{Query, QueryParser, AllQuery},
-    Searcher,
-    DocAddress,
-    Score,
-    schema::{Schema, SchemaBuilder, TextOptions, Field, Facet},
-    Index, IndexWriter,
-    collector::{TopDocs, FacetCollector, MultiCollector},
+    schema::{TextOptions},
 };
 
 
@@ -28,11 +22,11 @@ declare_types! {
             let js_arr_handle: Handle<JsArray> = cx.argument(1)?;
             let vec: Vec<Handle<JsValue>> = js_arr_handle.to_vec(&mut cx)?;
 
-            let options: Vec<TextOptions> = vec![];
             let mut text_options = TextOptions::default();
 
             for handle in vec.iter() {
-                let option: String = neon_serde::from_value(&mut cx, *handle)?;
+                //let option: String = handle.to_string(&mut cx)?.value();
+                let option: String = handle.to_string(&mut cx)?.value();
                 let new_options = match option.as_ref() {
                     "TEXT" => tantivy::schema::TEXT,
                     "STORED" => tantivy::schema::STORED.into(),
@@ -40,7 +34,6 @@ declare_types! {
                     _ => panic!("Unknown text option")
                 };
                 text_options = new_options | text_options.clone();
-
             }
 
             let mut this = cx.this();

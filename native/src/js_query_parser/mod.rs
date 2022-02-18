@@ -5,13 +5,7 @@ extern crate tantivy;
 use neon::prelude::*;
 
 use tantivy::{
-    query::{Query, QueryParser, AllQuery},
-    Searcher,
-    DocAddress,
-    Score,
-    schema::{Schema, SchemaBuilder, TextOptions, Field, Facet},
-    Index, IndexWriter,
-    collector::{TopDocs, FacetCollector, MultiCollector},
+    schema::{Field},
 };
 
 mod sane_query_parser;
@@ -44,7 +38,7 @@ declare_types! {
 
             let parser = { 
                 let guard = cx.lock();
-                let mut instance = sane_search.borrow(&guard);
+                let instance = sane_search.borrow(&guard);
                 let index = instance.index.as_ref().expect("Called QueryParser constructor on an uninitialized index");
                 let parser = SaneQueryParser::new(index, fields);
                 parser

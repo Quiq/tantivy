@@ -1,10 +1,7 @@
 extern crate tantivy;
-use std::cell::RefCell;
-use std::rc::Rc;
-
 
 use tantivy::{
-    schema::{Schema, SchemaBuilder, TextOptions, Field},
+    schema::{Schema, SchemaBuilder, TextOptions, Field, FacetOptions},
 };
 
 pub struct SaneSchemaBuilder {
@@ -29,7 +26,7 @@ impl SaneSchemaBuilder {
     pub fn add_facet_field(&mut self, field: &str) -> Field {
         let option = &mut self.schema_builder;
         let builder = option.as_mut().expect("No interior SchemaBuilder (Have you already called `.build()`?");
-        builder.add_facet_field(field)
+        builder.add_facet_field(field, FacetOptions::default())
     }
 
     pub fn build(&mut self) -> Schema {

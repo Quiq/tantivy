@@ -1,5 +1,4 @@
 // #![deny(warnings)]
-#[macro_use]
 extern crate neon;
 extern crate tantivy;
 

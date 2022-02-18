@@ -2,8 +2,8 @@ extern crate tantivy;
 extern crate neon;
 
 use tantivy:: {
-    query::{Query, QueryParser, AllQuery},
-    schema::{TextOptions, Field, Facet},
+    query::{Query},
+    schema::{Field, Facet},
     collector::FacetCollector,
 };
 
@@ -11,13 +11,13 @@ use neon::prelude::*;
 
 declare_types! {
     pub class JsQuery for OptionalQuery {
-        init(mut cx) {
+        init(mut _cx) {
             Ok(OptionalQuery { query: None } )
         }
     }
 
     pub class JsFacet for OptionalFacet {
-        init(mut cx) {
+        init(mut _cx) {
             let facet = Facet::root();
             let optional_facet = OptionalFacet {
                 facet: Some(facet)
@@ -42,7 +42,7 @@ declare_types! {
 
 
     pub class JsFacetCollector for OptionalFacetCollector {
-        init(mut cx) {
+        init(mut _cx) {
             Ok(OptionalFacetCollector {
                 facet_collector: None
             })
@@ -65,7 +65,7 @@ declare_types! {
 
                 // let mut facet_collector = instance.facet_collector.as_mut();
                 
-                let mut collector = FacetCollector::for_field(field);
+                let collector = FacetCollector::for_field(field);
                 instance.facet_collector = Some(collector);
                 // Ok(())
             };
@@ -86,7 +86,7 @@ declare_types! {
                 let field = field.facet.take().expect("Facet already consumed");
 
                 let mut instance = this.borrow_mut(&guard);
-                let mut instance = instance.facet_collector.as_mut().expect("Called `for_field` on a consumed FacetCollector");
+                let instance = instance.facet_collector.as_mut().expect("Called `for_field` on a consumed FacetCollector");
     
                 instance.add_facet(field)
             }
@@ -98,7 +98,7 @@ declare_types! {
 
 pub trait Optional {}
 pub struct OptionalQuery {
-    pub query: Option<Box<Query>>
+    pub query: Option<Box<dyn Query>>
 }
 impl Optional for OptionalQuery {}
 

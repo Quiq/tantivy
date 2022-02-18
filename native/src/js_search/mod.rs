@@ -3,13 +3,9 @@ extern crate tantivy;
 
 
 use tantivy::{
-    query::{Query, QueryParser, AllQuery},
-    Searcher,
-    DocAddress,
-    Score,
-    schema::{Schema, SchemaBuilder, TextOptions, Field, Facet},
-    Index, IndexWriter,
-    collector::{TopDocs, FacetCollector, MultiCollector},
+    query::{QueryParser},
+    schema::{Field, Facet},
+    collector::{TopDocs, MultiCollector},
 };
 use neon::prelude::*;
 
@@ -88,12 +84,12 @@ declare_types! {
         method facetSearch(mut cx) {
             let mut collector = cx.argument::<JsFacetCollector>(0)?;
 
-            let results = {
+            let _results = {
                 let this = cx.this();
                 let guard = cx.lock();
 
                 let mut optional_collector = collector.borrow_mut(&guard);
-                let mut collector = optional_collector.facet_collector.take().expect("invalid collector");
+                let collector = optional_collector.facet_collector.take().expect("invalid collector");
                 
                 let sanesearch = this.borrow(&guard);
                 let index = sanesearch.index.as_ref().expect("facetSearch called on no index");
@@ -218,6 +214,8 @@ declare_types! {
                 let this = cx.this();
                 let guard = cx.lock();
                 let this = this.borrow(&guard);
+
+                #[allow(deprecated)]
                 this.load_searchers().unwrap();
             }
 

@@ -6,7 +6,7 @@ use tantivy::{
     DocAddress,
     Score,
     Index, IndexWriter,
-    collector::{TopDocs, Collector},
+    collector::{TopDocs},
 };
 
  
@@ -64,7 +64,7 @@ impl SaneSearch {
         Ok(results)
     }
 
-    pub fn top_search(&self, query: &Box<Query>, collector: &TopDocs) -> Vec<(Score, String)> {
+    pub fn top_search(&self, query: &Box<dyn Query>, collector: &TopDocs) -> Vec<(Score, String)> {
         let index = self.index.as_ref().expect("Cannot search without an index");
         let schema = self.schema.as_ref().expect("Cannot search without a schema");
         let reader = index.reader().expect("Unable to acquire reader");
@@ -82,10 +82,12 @@ impl SaneSearch {
         results
     }
 
+    #[allow(dead_code)]
     pub fn set_schema(&mut self, schema: Schema) {
         self.schema = Some(schema);
     }
 
+    #[allow(dead_code)]
     pub fn set_index(&mut self, index: Index) {
         self.index = Some(index);
     }
@@ -94,17 +96,17 @@ impl SaneSearch {
         self.default_search_fields = Some(fields);
     }
     
-    pub fn create_index(&mut self, path: String) -> Result<(), tantivy::Error> {
+    pub fn create_index(&mut self, path: String) -> tantivy::Result<()> {
         let schema = self.schema.as_ref().expect("Cannot create a new index without a schema");
         let dir_path = PathBuf::from(path);
-        let dir = tantivy::directory::MmapDirectory::open(dir_path)?;
+        //let dir = tantivy::directory::MmapDirectory::open(dir_path)?;
         
-        let index = Index::create(dir, schema.clone())?; 
+        let index = Index::create_in_dir(dir_path.as_path(), schema.clone())?; 
         self.index = Some(index);
         Ok(())
     }
 
-    pub fn open_index(&mut self, path: String) -> Result<(), tantivy::Error> {
+    pub fn open_index(&mut self, path: String) -> tantivy::Result<()> {
         let dir_path = PathBuf::from(path);
         let dir = tantivy::directory::MmapDirectory::open(dir_path)?;
         
@@ -114,10 +116,10 @@ impl SaneSearch {
         Ok(())
     }
 
-    pub fn create_index_writer(&mut self, heap_size: usize) -> Result<(), tantivy::Error> {
+    pub fn create_index_writer(&mut self, heap_size: usize) -> tantivy::Result<()> {
         let index = self.index.as_ref().expect("Cannot create a new index writer without an index");
 
-        if let Some(writer) = self.index_writer.as_ref() {
+        if let Some(_writer) = self.index_writer.as_ref() {
             Ok(())
         } else {
             let writer = index.writer(heap_size)?;
@@ -126,7 +128,7 @@ impl SaneSearch {
         }
     }
 
-    pub fn add_doc(&mut self, json: &str) -> Result<(), tantivy::Error> {
+    pub fn add_doc(&mut self, json: &str) -> tantivy::Result<()> {
         let index_writer = self.index_writer.as_mut().expect("Cannot add a document without an index writer");
         let schema = self.schema.as_ref().expect("Cannot add a document without a schema");
         let doc = schema.parse_document(json)?;
@@ -134,20 +136,21 @@ impl SaneSearch {
         Ok(())
     }
 
-    pub fn commit_index_writer(&mut self) -> Result<(), tantivy::Error> {
+    pub fn commit_index_writer(&mut self) -> tantivy::Result<()> {
         let index_writer = self.index_writer.as_mut().expect("Cannot add a document without an index writer");
         index_writer.commit()?;
         Ok(())
     }
 
     #[deprecated]
-    pub fn load_searchers(&self) -> Result<(), tantivy::Error> {
+    pub fn load_searchers(&self) -> tantivy::Result<()> {
         println!("This function does nothing now");
         Ok(())
     }
 
+    #[allow(dead_code)]
     pub fn consume_writer(&mut self) {
-        let index_writer = self.index_writer.take().expect("Cannot consume an index writer without an index writer");
+        let _index_writer = self.index_writer.take().expect("Cannot consume an index writer without an index writer");
     }
     
 }
