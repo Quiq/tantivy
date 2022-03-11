@@ -7,8 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 0",
     "build": "neon build --release",
     "build-electron": "npx electron-build-env neon build tantivy",
-    "install": "node-pre-gyp install --fallback-to-build=true || neon build --release",
-    "package": "node-pre-gyp package",
+    "cleandeps": "rm -R native/target/release/deps",
+    "install": "node-pre-gyp install --fallback-to-build=true || npm run build",
+    "package": "npm run cleandeps && node-pre-gyp package",
     "start": "nodemon -e \"rs toml\" -x \"neon build --release\""
   },
   "author": "Stranger Labs",
@@ -46,9 +47,12 @@
   "binary": {
     "module_name": "index",
     "module_path": "./native",
-    "host": "https://github.com/quiq/tantivy/releases/download/",
+    "host": "https://github.quiq.sh/Quiq/tantivy/releases/download/",
     "remote_path": "{version}",
     "package_name": "index-v{version}-{platform}-{arch}.tar.gz",
     "pkg_path": "."
+  },
+  "publishConfig": {
+    "registry": "https://nexus.quiq.sh/repository/npm-releases/"
   }
 }
