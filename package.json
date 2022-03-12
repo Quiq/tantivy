@@ -7,9 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 0",
     "build": "neon build --release",
     "build-electron": "npx electron-build-env neon build tantivy",
-    "cleandeps": "rm -R native/target/release/deps",
+    "cleanbuild": "rm -R native/target/release/deps; rm -R native/target/release/build",
     "install": "node-pre-gyp install --fallback-to-build=true || npm run build",
-    "package": "npm run cleandeps && node-pre-gyp package",
+    "package": "npm run cleanbuild && node-pre-gyp package",
     "start": "nodemon -e \"rs toml\" -x \"neon build --release\""
   },
   "author": "Stranger Labs",
