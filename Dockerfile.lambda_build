@@ -1,0 +1,30 @@
+FROM public.ecr.aws/lambda/nodejs:14 AS builder
+
+ARG VERSION
+ARG ARCH
+
+# Install development tools and rust/cargo
+RUN yum groupinstall -y "Development Tools"
+RUN yum install -y python3
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > /rustup.sh && chmod +x /rustup.sh && /rustup.sh -y
+
+WORKDIR /var/task
+
+# Build and package tantivy native module
+ADD . /var/task
+RUN source $HOME/.cargo/env && \
+    npm install && \
+    npm run build && \
+    npm run package
+
+# For now skip this step, it seems like it may be unnecessary
+#WORKDIR /var/task/build/stage/$VERSION/
+
+#RUN gunzip index-v$VERSION-linux-$ARCH.tar.gz
+
+# Libraries will be under:
+# - /var/task/node_modules/@strangerlabs/tantivy/native/lib64
+# These paths will need to be added to the LD_LIBRARY_PATH env variable
+#RUN tar rf index-v$VERSION-linux-$ARCH.tar /lib64/libstdc++.so.6 /lib64/libgcc_s.so.1 /lib64/librt.so.1 /lib64/libpthread.so.0 /lib64/libm.so.6 /lib64/libdl.so.2 /lib64/libc.so.6 /lib64/ld-linux-x86-64.so.2
+
+#RUN gzip index-v$VERSION-linux-$ARCH.tar
