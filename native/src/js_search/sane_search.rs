@@ -7,6 +7,7 @@ use tantivy::{
     Score,
     Index, IndexWriter,
     collector::{TopDocs},
+    tokenizer::{Language, LowerCaser, RemoveLongFilter, SimpleTokenizer, Stemmer, TextAnalyzer},
 };
 
  
@@ -95,13 +96,17 @@ impl SaneSearch {
     pub fn set_default_fields(&mut self, fields: Vec<Field>) {
         self.default_search_fields = Some(fields);
     }
-    
+
     pub fn create_index(&mut self, path: String) -> tantivy::Result<()> {
         let schema = self.schema.as_ref().expect("Cannot create a new index without a schema");
         let dir_path = PathBuf::from(path);
         //let dir = tantivy::directory::MmapDirectory::open(dir_path)?;
         
         let index = Index::create_in_dir(dir_path.as_path(), schema.clone())?; 
+
+        // Attach custom tokenizers for different languages
+        SaneSearch::register_custom_text_analyzers(&index);
+
         self.index = Some(index);
         Ok(())
     }
@@ -111,6 +116,10 @@ impl SaneSearch {
         let dir = tantivy::directory::MmapDirectory::open(dir_path)?;
         
         let index = Index::open(dir)?; 
+
+        // Attach custom tokenizers for different languages
+        SaneSearch::register_custom_text_analyzers(&index);
+
         self.schema = Some(index.schema());
         self.index = Some(index);
         Ok(())
@@ -153,4 +162,28 @@ impl SaneSearch {
         let _index_writer = self.index_writer.take().expect("Cannot consume an index writer without an index writer");
     }
     
+    // Build custom text analyzers to be attached to the index
+    // For now sticking with French, German and Spanish for simplicity
+    // https://docs.rs/tantivy/latest/tantivy/tokenizer/index.html
+    // https://docs.rs/tantivy/latest/tantivy/tokenizer/struct.TextAnalyzer.html
+    // https://docs.rs/tantivy/latest/tantivy/tokenizer/enum.Language.html
+    fn register_custom_text_analyzers(index: &Index) {
+        let de_stem = TextAnalyzer::from(SimpleTokenizer)
+            .filter(RemoveLongFilter::limit(40))
+            .filter(LowerCaser)
+            .filter(Stemmer::new(Language::German));
+        index.tokenizers().register("de_stem", de_stem);
+
+        let es_stem = TextAnalyzer::from(SimpleTokenizer)
+            .filter(RemoveLongFilter::limit(40))
+            .filter(LowerCaser)
+            .filter(Stemmer::new(Language::Spanish));
+        index.tokenizers().register("es_stem", es_stem);
+
+        let fr_stem = TextAnalyzer::from(SimpleTokenizer)
+            .filter(RemoveLongFilter::limit(40))
+            .filter(LowerCaser)
+            .filter(Stemmer::new(Language::French));
+        index.tokenizers().register("fr_stem", fr_stem);
+    }
 }
