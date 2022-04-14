@@ -38,7 +38,7 @@ declare_types! {
                 .set_indexing_options(
                     TextFieldIndexing::default()
                         .set_tokenizer(&tokenizer)
-                        .set_index_option(IndexRecordOption::Basic)
+                        .set_index_option(IndexRecordOption::WithFreqsAndPositions)
                 );
             for handle in vec.iter() {
                 //let option: String = handle.to_string(&mut cx)?.value();
