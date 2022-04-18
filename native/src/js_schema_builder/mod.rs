@@ -25,14 +25,17 @@ declare_types! {
             // Allow the selection of tokenizers for different languages. 
             // Out of the box tokenizers: default, raw, en_stem
             // https://docs.rs/tantivy/latest/tantivy/tokenizer/index.html
-            let mut tokenizer = cx.argument::<JsString>(2)?.value();
-            tokenizer = if !tokenizer.is_empty() {
-                tokenizer
-            } else {
-                "default".to_string()
-            };
+            let mut tokenizer = "default".to_string();
+            let tokenizer_handle = cx.argument_opt(2);
+            if let Some(_tokenizer_handle) = tokenizer_handle {
+                let tokenizer_arg = cx.argument::<JsString>(2)?.value();
+                if !tokenizer_arg.is_empty() {
+                    tokenizer = tokenizer_arg;
+                }
+            }
 
-            println!("Using tokenizer {}", tokenizer);
+            println!("Tokenizer: {}", tokenizer);
+
 
             let mut text_options = TextOptions::default()
                 .set_indexing_options(
