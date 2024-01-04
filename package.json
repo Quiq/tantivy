@@ -35,7 +35,7 @@
     "nan": "2.18.0",
     "neon-cli": "0.10.1",
     "nodemon": "3.0.2",
-    "node-gyp": "8.4.1"
+    "node-gyp": "10.0.1"
   },
   "repository": {
     "type": "git",
