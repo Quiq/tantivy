@@ -1,6 +1,6 @@
 {
   "name": "@strangerlabs/tantivy",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "NodeJS bindings for Tantivy",
   "main": "index.js",
   "scripts": {
@@ -27,14 +27,14 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@mapbox/node-pre-gyp": "1.0.8"
+    "@mapbox/node-pre-gyp": "1.0.11"
   },
   "devDependencies": {
     "electron-build-env": "0.2.0",
-    "electron-rebuild": "3.2.7",
-    "nan": "2.15.0",
-    "neon-cli": "0.9.1",
-    "nodemon": "2.0.15",
+    "electron-rebuild": "3.2.9",
+    "nan": "2.18.0",
+    "neon-cli": "0.10.1",
+    "nodemon": "3.0.2",
     "node-gyp": "8.4.1"
   },
   "repository": {
